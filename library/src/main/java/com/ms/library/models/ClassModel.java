@@ -21,15 +21,8 @@ public class ClassModel implements Serializable {
     @OneToMany(mappedBy = "classModel")
     private Set<UserModel> users = new HashSet<>();
 
-    public ClassModel() {
-    }
 
-    public ClassModel(UUID classId, Integer numClass, String courseName, Set<UserModel> users) {
-        this.classId = classId;
-        this.numClass = numClass;
-        this.courseName = courseName;
-        this.users = users;
-    }
+
 
     public UUID getClassId() {
         return classId;
@@ -47,19 +40,15 @@ public class ClassModel implements Serializable {
         this.numClass = numClass;
     }
 
-    public String getCourse_name() {
+    public String getCourseName() {
         return courseName;
     }
 
-    public void setCourse_name(String courseName) {
+    public void setCourseName(String courseName) {
         this.courseName = courseName;
     }
 
-    public Set<UserModel> getUsers() {
-        return users;
-    }
 
-    public void setUsers(Set<UserModel> users) {
-        this.users = users;
-    }
+
+
 }
