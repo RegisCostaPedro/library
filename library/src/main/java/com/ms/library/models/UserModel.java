@@ -1,6 +1,7 @@
 package com.ms.library.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.RoleUser;
 import jakarta.persistence.*;
 
@@ -18,11 +19,18 @@ public class UserModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID userId;
+    @Enumerated(EnumType.ORDINAL)
     private RoleUser roleUser;
     private String registration;
+
     private String name;
+
+    @Column(unique = true)
     private String email;
+
     private String password;
+
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private Date birthDate;
 
     @ManyToOne
@@ -33,7 +41,7 @@ public class UserModel implements Serializable {
     private Set<ReservationModel> reservations = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<LoanModel> loans = new HashSet<>();;
+    private Set<LoanModel> loans = new HashSet<>();
 
 
     public UserModel() {
@@ -52,44 +60,21 @@ public class UserModel implements Serializable {
         this.loans = loans;
     }
 
-    public UUID getId_user() {
-        return userId;
+
+    public ClassModel getClassModel() {
+        return classModel;
     }
 
-    public void setId_user(UUID userId) {
-        this.userId = userId;
+    public void setClassModel(ClassModel classModel) {
+        this.classModel = classModel;
     }
 
-    public RoleUser getRole_user() {
-        return roleUser;
+    public Date getBirthDate() {
+        return birthDate;
     }
 
-    public void setRole_user(RoleUser roleUser) {
-        this.roleUser = roleUser;
-    }
-
-    public String getRegistration() {
-        return registration;
-    }
-
-    public void setRegistration(String registration) {
-        this.registration = registration;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
     }
 
     public String getPassword() {
@@ -100,35 +85,43 @@ public class UserModel implements Serializable {
         this.password = password;
     }
 
-    public Date getBirth_date() {
-        return birthDate;
+    public String getEmail() {
+        return email;
     }
 
-    public void setBirth_date(Date birthDate) {
-        this.birthDate = birthDate;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public ClassModel getClass_id() {
-        return classModel;
+    public String getName() {
+        return name;
     }
 
-    public void setClass_id(ClassModel classModel) {
-        this.classModel = classModel;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Set<ReservationModel> getReservations() {
-        return reservations;
+    public String getRegistration() {
+        return registration;
     }
 
-    public void setReservations(Set<ReservationModel> reservations) {
-        this.reservations = reservations;
+    public void setRegistration(String registration) {
+        this.registration = registration;
     }
 
-    public Set<LoanModel> getLoans() {
-        return loans;
+    public RoleUser getRoleUser() {
+        return roleUser;
     }
 
-    public void setLoans(Set<LoanModel> loans) {
-        this.loans = loans;
+    public void setRoleUser(RoleUser roleUser) {
+        this.roleUser = roleUser;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }
