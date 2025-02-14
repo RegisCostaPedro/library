@@ -1,5 +1,6 @@
 package com.ms.library.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.StatusLoan;
 import com.ms.library.enums.StatusReservation;
 import jakarta.persistence.*;
@@ -26,8 +27,9 @@ public class LoanModel implements Serializable {
     @JoinColumn(name = "book_id")
     private BookModel book;
 
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime loanDate;
-
+    @JsonFormat(pattern = "yyyy/MM/dd")
     private Date returnDate;
 
     private StatusLoan status;

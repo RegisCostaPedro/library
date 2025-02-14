@@ -17,6 +17,7 @@ public class BookModel implements Serializable {
     private UUID bookId;
     private String isbn;
     private String author;
+    @Column(unique = true)
     private String title;
     private String description;
     private Integer quantityAvailable;
@@ -129,17 +130,13 @@ public class BookModel implements Serializable {
         this.image = image;
     }
 
-    public Set<ReservationModel> getReservations() {
-        return reservations;
-    }
+
 
     public void setReservations(Set<ReservationModel> reservations) {
         this.reservations = reservations;
     }
 
-    public Set<LoanModel> getLoan_books() {
-        return loan_books;
-    }
+
 
     public void setLoan_books(Set<LoanModel> loan_books) {
         this.loan_books = loan_books;

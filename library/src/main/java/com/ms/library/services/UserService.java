@@ -4,22 +4,17 @@ import com.ms.library.models.ClassModel;
 import com.ms.library.models.UserModel;
 import com.ms.library.repositories.ClassRepository;
 import com.ms.library.repositories.UserRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class UserService {
 
-    private static final Logger log = LogManager.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -39,8 +34,7 @@ public class UserService {
     }
 
     public UserModel findUserById(UUID id) {
-        UserModel userFind = userRepository.findById(id).get();
-        return userFind;
+        return userRepository.findById(id).get();
     }
 
     public UserModel updateUser(UserModel userModel, UUID id) {
@@ -51,9 +45,8 @@ public class UserService {
         userFind.setRoleUser(userModel.getRoleUser());
         userFind.setBirthDate(userModel.getBirthDate());
         userFind.setPassword(userModel.getPassword());
-
         userFind.setClassModel(classModel);
-        return  userRepository.save(userFind);
+        return userRepository.save(userFind);
     }
 
     public void deleteUser(UUID id) {
