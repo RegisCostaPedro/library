@@ -7,9 +7,8 @@ import com.ms.library.models.UserModel;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-public record LoanRecordDto(UserModel user_id,
-                            BookModel book_id,
-                            LocalDateTime loanDate,
+public record LoanRecordDto(UserModel userModel,
+                            BookModel bookModel,
                             Date returnDate,
                             StatusLoan status)
 {

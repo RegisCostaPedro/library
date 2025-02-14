@@ -2,7 +2,6 @@ package com.ms.library.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.StatusLoan;
-import com.ms.library.enums.StatusReservation;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -21,11 +20,11 @@ public class LoanModel implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private UserModel user;
+    private UserModel userModel;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
-    private BookModel book;
+    private BookModel bookModel;
 
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime loanDate;
@@ -37,52 +36,52 @@ public class LoanModel implements Serializable {
     public LoanModel() {
     }
 
-    public LoanModel(UUID loanId, UserModel user, BookModel book, LocalDateTime loanDate, Date returnDate, StatusLoan status) {
+    public LoanModel(UUID loanId, UserModel userModel, BookModel bookModel, LocalDateTime loanDate, Date returnDate, StatusLoan status) {
         this.loanId = loanId;
-        this.user = user;
-        this.book = book;
+        this.userModel = userModel;
+        this.bookModel = bookModel;
         this.loanDate = loanDate;
         this.returnDate = returnDate;
         this.status = status;
     }
 
-    public UUID getId_loan() {
+    public UUID getLoanId() {
         return loanId;
     }
 
-    public void setId_loan(UUID loanId) {
+    public void setLoanId(UUID loanId) {
         this.loanId = loanId;
     }
 
-    public UserModel getUser() {
-        return user;
+    public UserModel getUserModel() {
+        return userModel;
     }
 
-    public void setUser(UserModel user) {
-        this.user = user;
+    public void setUserModel(UserModel userModel) {
+        this.userModel = userModel;
     }
 
-    public BookModel getBook() {
-        return book;
+    public BookModel getBookModel() {
+        return bookModel;
     }
 
-    public void setBook(BookModel book) {
-        this.book = book;
+    public void setBookModel(BookModel bookModel) {
+        this.bookModel = bookModel;
     }
 
-    public LocalDateTime getLoan_date() {
+    public LocalDateTime getLoanDate() {
         return loanDate;
     }
 
-    public void setLoan_date(LocalDateTime loanDate) {
+    public void setLoanDate(LocalDateTime loanDate) {
         this.loanDate = loanDate;
     }
 
-    public Date getReturn_date() {
+    public Date getReturnDate() {
         return returnDate;
     }
 
-    public void setReturn_date(Date returnDate) {
+    public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
     }
 

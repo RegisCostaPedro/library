@@ -29,7 +29,7 @@ public class BookModel implements Serializable {
     @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
     private Set<ReservationModel> reservations = new HashSet<>();
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bookModel", fetch = FetchType.EAGER)
     private Set<LoanModel> loan_books = new HashSet<>();
 
     public BookModel() {
@@ -50,7 +50,7 @@ public class BookModel implements Serializable {
         this.loan_books = loan_books;
     }
 
-    public UUID getId_book() {
+    public UUID getBookId() {
         return bookId;
     }
 

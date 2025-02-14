@@ -40,7 +40,7 @@ public class UserModel implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<ReservationModel> reservations = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userModel", fetch = FetchType.EAGER)
     private Set<LoanModel> loans = new HashSet<>();
 
 
