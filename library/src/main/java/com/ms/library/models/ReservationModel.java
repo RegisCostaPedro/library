@@ -1,12 +1,14 @@
 package com.ms.library.models;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.StatusReservation;
 import jakarta.persistence.*;
 import org.apache.catalina.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -18,42 +20,43 @@ public class ReservationModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID reservationId;
 
-    private LocalDateTime reservationDate;
+    @JsonFormat(pattern = "yyyy/MM/dd")
+    private Date reservationDate;
 
     private StatusReservation status;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_user")
-    private UserModel user;
+    @JoinColumn(name = "user_id")
+    private UserModel userModel;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_book")
-    private BookModel book;
+    @JoinColumn(name = "book_id")
+    private BookModel bookModel;
 
     public ReservationModel() {
     }
 
-    public ReservationModel(UUID reservationId, LocalDateTime reservationDate, StatusReservation status, UserModel user, BookModel book) {
+    public ReservationModel(UUID reservationId, Date reservationDate, StatusReservation status, UserModel userModel, BookModel bookModel) {
         this.reservationId = reservationId;
         this.reservationDate = reservationDate;
         this.status = status;
-        this.user = user;
-        this.book = book;
+        this.userModel = userModel;
+        this.bookModel = bookModel;
     }
 
-    public UUID getId_reservation() {
+    public UUID getReservationId() {
         return reservationId;
     }
 
-    public void setId_reservation(UUID reservationId) {
+    public void setReservationId(UUID reservationId) {
         this.reservationId = reservationId;
     }
 
-    public LocalDateTime getReservation_date() {
+    public Date getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservation_date(LocalDateTime reservationDate) {
+    public void setReservationDate(Date reservationDate) {
         this.reservationDate = reservationDate;
     }
 
@@ -65,19 +68,19 @@ public class ReservationModel implements Serializable {
         this.status = status;
     }
 
-    public UserModel getUser_id() {
-        return user;
+    public UserModel getUserModel() {
+        return userModel;
     }
 
-    public void setUser_id(UserModel user) {
-        this.user = user;
+    public void setUserModel(UserModel userModel) {
+        this.userModel = userModel;
     }
 
-    public BookModel getBook() {
-        return book;
+    public BookModel getBookModel() {
+        return bookModel;
     }
 
-    public void setBook(BookModel book) {
-        this.book = book;
+    public void setBookModel(BookModel bookModel) {
+        this.bookModel = bookModel;
     }
 }

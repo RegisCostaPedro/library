@@ -37,7 +37,7 @@ public class UserModel implements Serializable {
     @JoinColumn(name = "class_id")
     private ClassModel classModel;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userModel", fetch = FetchType.EAGER)
     private Set<ReservationModel> reservations = new HashSet<>();
 
     @OneToMany(mappedBy = "userModel", fetch = FetchType.EAGER)

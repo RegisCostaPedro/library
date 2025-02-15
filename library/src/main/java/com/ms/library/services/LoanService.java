@@ -31,7 +31,6 @@ public class LoanService {
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId()).get();
 
-
         loan.setLoanDate(LocalDateTime.now());
         loan.setBookModel(bookModel);
         loan.setUserModel(userModel);
@@ -52,7 +51,6 @@ public class LoanService {
         var loanFind = loanRepository.findById(id).get();
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId()).get();
-
 
         loanFind.setLoanDate(LocalDateTime.now());
         loanFind.setReturnDate(loan.getReturnDate());

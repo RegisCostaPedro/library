@@ -23,13 +23,7 @@ public class LoanController {
     public ResponseEntity<LoanModel> createLoan(@RequestBody LoanRecordDto loanRecordDto) {
         LoanModel loanModel = new LoanModel();
 
-        System.out.println(loanRecordDto.bookModel().getBookId());
-        System.out.println(loanRecordDto.userModel().getUserId());
-        System.out.println(loanRecordDto.status());
-        System.out.println(loanRecordDto.returnDate());
-        System.out.println("-------------------------------------------------------");
         BeanUtils.copyProperties(loanRecordDto, loanModel);
-
         return new ResponseEntity<>(loanService.saveLoan(loanModel), HttpStatus.CREATED);
     }
 

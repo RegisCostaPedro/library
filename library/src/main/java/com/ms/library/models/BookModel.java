@@ -26,7 +26,7 @@ public class BookModel implements Serializable {
     private String genre;
     private String image;
 
-    @OneToMany(mappedBy = "book", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "bookModel", fetch = FetchType.EAGER)
     private Set<ReservationModel> reservations = new HashSet<>();
 
     @OneToMany(mappedBy = "bookModel", fetch = FetchType.EAGER)
