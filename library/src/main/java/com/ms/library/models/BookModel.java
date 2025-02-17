@@ -15,6 +15,8 @@ public class BookModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID bookId;
+
+    @Column(unique = true)
     private String isbn;
     private String author;
     @Column(unique = true)

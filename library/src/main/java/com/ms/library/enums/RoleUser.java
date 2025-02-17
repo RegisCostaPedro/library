@@ -6,5 +6,6 @@ import jakarta.persistence.Enumerated;
 public enum RoleUser {
     ADMIN,
     STUDENT,
-    LIBRARIAN
+    LIBRARIAN,
+    TEACHER
 }

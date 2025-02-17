@@ -1,13 +1,9 @@
 package com.ms.library.controllers;
 
-import com.ms.library.dtos.ClassRecordDto;
 import com.ms.library.dtos.UserRecordDto;
-import com.ms.library.models.ClassModel;
 import com.ms.library.models.UserModel;
 import com.ms.library.services.UserService;
 import jakarta.validation.Valid;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

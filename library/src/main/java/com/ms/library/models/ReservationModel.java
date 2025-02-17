@@ -4,10 +4,7 @@ package com.ms.library.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.StatusReservation;
 import jakarta.persistence.*;
-import org.apache.catalina.User;
-
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 

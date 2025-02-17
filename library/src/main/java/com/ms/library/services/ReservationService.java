@@ -1,9 +1,12 @@
 package com.ms.library.services;
 
+import com.ms.library.enums.StatusReservation;
+import com.ms.library.exceptions.NoBooksAvailableException;
 import com.ms.library.models.BookModel;
 import com.ms.library.models.ReservationModel;
 import com.ms.library.models.UserModel;
 import com.ms.library.repositories.BookRepository;
+import com.ms.library.repositories.LoanRepository;
 import com.ms.library.repositories.ReservationRepository;
 import com.ms.library.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +28,24 @@ public class ReservationService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LoanRepository loanRepository;
+
     public ReservationModel saveReservation(ReservationModel reservationModel) {
+
+
         BookModel bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
 
 
+        if (bookModel.getQuantity_available() <= 0) {
+            throw new NoBooksAvailableException();
+        }
+
+
         reservationModel.setBookModel(bookModel);
         reservationModel.setUserModel(userModel);
-
+        reservationModel.setStatus(StatusReservation.ACTIVE);
         return reservationRepository.save(reservationModel);
     }
 
@@ -49,6 +62,9 @@ public class ReservationService {
         BookModel bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
 
+        if (bookModel.getQuantity_available() <= 0) {
+            throw new NoBooksAvailableException();
+        }
         reservationFind.setStatus(reservationModel.getStatus());
         reservationFind.setUserModel(userModel);
         reservationFind.setBookModel(bookModel);
@@ -56,8 +72,7 @@ public class ReservationService {
         if (reservationModel.getReservationDate() == null) {
             var previousReservationDate = reservationRepository.findById(id).get();
             reservationFind.setReservationDate(previousReservationDate.getReservationDate());
-        }
-        else {
+        } else {
             reservationFind.setReservationDate(reservationModel.getReservationDate());
         }
         return reservationRepository.save(reservationFind);

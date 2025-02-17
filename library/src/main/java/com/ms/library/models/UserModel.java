@@ -21,6 +21,8 @@ public class UserModel implements Serializable {
     private UUID userId;
     @Enumerated(EnumType.ORDINAL)
     private RoleUser roleUser;
+
+    @Column(unique = true)
     private String registration;
 
     private String name;

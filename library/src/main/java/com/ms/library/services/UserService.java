@@ -23,9 +23,7 @@ public class UserService {
     public UserModel saveUser(UserModel model) {
 
         ClassModel classModel = classRepository.findById(model.getClassModel().getClassId()).get();
-
         model.setClassModel(classModel);
-
         return userRepository.save(model);
     }
 

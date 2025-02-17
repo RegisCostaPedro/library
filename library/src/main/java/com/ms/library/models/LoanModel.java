@@ -23,20 +23,21 @@ public class LoanModel implements Serializable {
     private UserModel userModel;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id")
+    @JoinColumn(name = "id_book")
     private BookModel bookModel;
 
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime loanDate;
+
     @JsonFormat(pattern = "yyyy/MM/dd")
-    private Date returnDate;
+    private LocalDateTime returnDate;
 
     private StatusLoan status;
 
     public LoanModel() {
     }
 
-    public LoanModel(UUID loanId, UserModel userModel, BookModel bookModel, LocalDateTime loanDate, Date returnDate, StatusLoan status) {
+    public LoanModel(UUID loanId, UserModel userModel, BookModel bookModel, LocalDateTime loanDate, LocalDateTime returnDate, StatusLoan status) {
         this.loanId = loanId;
         this.userModel = userModel;
         this.bookModel = bookModel;
@@ -77,11 +78,11 @@ public class LoanModel implements Serializable {
         this.loanDate = loanDate;
     }
 
-    public Date getReturnDate() {
+    public LocalDateTime getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(Date returnDate) {
+    public void setReturnDate(LocalDateTime returnDate) {
         this.returnDate = returnDate;
     }
 
@@ -91,5 +92,17 @@ public class LoanModel implements Serializable {
 
     public void setStatus(StatusLoan status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "LoanModel{" +
+                "loanId=" + loanId +
+                "\n, userModel=" + userModel +
+                "\n, bookModel=" + bookModel +
+                "\n, loanDate=" + loanDate +
+                "\n, returnDate=" + returnDate +
+                "\n, status=" + status +
+                '}'+"\n";
     }
 }
