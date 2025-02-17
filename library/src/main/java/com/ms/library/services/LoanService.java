@@ -2,6 +2,7 @@ package com.ms.library.services;
 
 import com.ms.library.enums.StatusLoan;
 import com.ms.library.exceptions.InvalidReturnDateException;
+import com.ms.library.exceptions.LoanReturnDateOutOfLimitException;
 import com.ms.library.exceptions.NoBooksAvailableException;
 import com.ms.library.models.BookModel;
 import com.ms.library.models.LoanModel;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import java.util.UUID;
@@ -33,26 +35,36 @@ public class LoanService {
 
     public LoanModel saveLoan(LoanModel loan) {
 
-
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
-
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
+
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
+        }
+        if (loan.getReturnDate() == null) {
+            loan.setReturnDate(LocalDateTime.now().plusDays(16));
+        }
+        long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(),loan.getReturnDate());
+        System.out.println("daysBetween " + daysBetween);
+        System.out.println("daysBetween " + daysBetween);
+        System.out.println("daysBetween " + daysBetween);
+        System.out.println("daysBetween " + daysBetween);
+        if (daysBetween > 15) {
+            throw new LoanReturnDateOutOfLimitException();
         }
 
         if (loan.getReturnDate().isBefore(LocalDateTime.now())) {
             throw new InvalidReturnDateException();
         }
 
-
         List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
-        System.out.println("loansWithStatusInUse: "+ loansWithStatusInUse.toString());
+
         if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
             throw new NoBooksAvailableException("This book is in use.");
         }
+
         loan.setStatus(StatusLoan.IN_USE);
         loan.setLoanDate(LocalDateTime.now());
         loan.setBookModel(bookModel);
