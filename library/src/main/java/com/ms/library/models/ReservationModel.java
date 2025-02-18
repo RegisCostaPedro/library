@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.StatusReservation;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +19,10 @@ public class ReservationModel implements Serializable {
     private UUID reservationId;
 
     @JsonFormat(pattern = "yyyy/MM/dd")
-    private Date reservationDate;
+    private LocalDateTime reservationDate;
+
+    @JsonFormat(pattern = "yyyy/MM/dd")
+    private LocalDateTime returnDate;
 
     private StatusReservation status;
 
@@ -33,9 +37,10 @@ public class ReservationModel implements Serializable {
     public ReservationModel() {
     }
 
-    public ReservationModel(UUID reservationId, Date reservationDate, StatusReservation status, UserModel userModel, BookModel bookModel) {
+    public ReservationModel(UUID reservationId, LocalDateTime reservationDate, LocalDateTime returnDate, StatusReservation status, UserModel userModel, BookModel bookModel) {
         this.reservationId = reservationId;
         this.reservationDate = reservationDate;
+        this.returnDate = returnDate;
         this.status = status;
         this.userModel = userModel;
         this.bookModel = bookModel;
@@ -49,12 +54,20 @@ public class ReservationModel implements Serializable {
         this.reservationId = reservationId;
     }
 
-    public Date getReservationDate() {
+    public LocalDateTime getReservationDate() {
         return reservationDate;
     }
 
-    public void setReservationDate(Date reservationDate) {
+    public void setReservationDate(LocalDateTime reservationDate) {
         this.reservationDate = reservationDate;
+    }
+
+    public LocalDateTime getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDateTime returnDate) {
+        this.returnDate = returnDate;
     }
 
     public StatusReservation getStatus() {

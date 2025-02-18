@@ -24,6 +24,7 @@ public class ReservationController {
 
         ReservationModel reservationModel = new ReservationModel();
         BeanUtils.copyProperties(reservationRecordDto, reservationModel);
+
         return new ResponseEntity<>(reservationService.saveReservation(reservationModel), HttpStatus.CREATED);
     }
 
@@ -42,6 +43,7 @@ public class ReservationController {
     public ResponseEntity<ReservationModel> updateReservation(@RequestBody ReservationRecordDto reservationRecordDto, @PathVariable UUID id) {
         ReservationModel reservationModel = new ReservationModel();
         BeanUtils.copyProperties(reservationRecordDto, reservationModel);
+
         return new ResponseEntity<>(reservationService.updateReservation(reservationModel, id), HttpStatus.CREATED);
 
     }

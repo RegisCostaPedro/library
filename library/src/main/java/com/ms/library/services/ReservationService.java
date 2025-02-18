@@ -1,8 +1,10 @@
 package com.ms.library.services;
 
+import com.ms.library.enums.StatusLoan;
 import com.ms.library.enums.StatusReservation;
 import com.ms.library.exceptions.NoBooksAvailableException;
 import com.ms.library.models.BookModel;
+import com.ms.library.models.LoanModel;
 import com.ms.library.models.ReservationModel;
 import com.ms.library.models.UserModel;
 import com.ms.library.repositories.BookRepository;
@@ -31,6 +33,9 @@ public class ReservationService {
     @Autowired
     private LoanRepository loanRepository;
 
+    @Autowired
+    private LoanService loanService;
+
     public ReservationModel saveReservation(ReservationModel reservationModel) {
 
         BookModel bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
@@ -39,6 +44,16 @@ public class ReservationService {
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
+
+        var loan = new LoanModel();
+        loan.setLoanId(reservationModel.getReservationId());
+        loan.setLoanDate(reservationModel.getReservationDate());
+        loan.setReturnDate(reservationModel.getReturnDate());
+        loan.setUserModel(userModel);
+        loan.setBookModel(bookModel);
+        loan.setStatus(StatusLoan.RESERVED);
+
+        loanService.saveLoan(loan);
 
         reservationModel.setBookModel(bookModel);
         reservationModel.setUserModel(userModel);
@@ -62,6 +77,9 @@ public class ReservationService {
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
+        var loan = new LoanModel();
+
+
         reservationFind.setStatus(reservationModel.getStatus());
         reservationFind.setUserModel(userModel);
         reservationFind.setBookModel(bookModel);

@@ -10,6 +10,7 @@ import com.ms.library.models.UserModel;
 import com.ms.library.repositories.BookRepository;
 import com.ms.library.repositories.LoanRepository;
 import com.ms.library.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class LoanService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public LoanModel saveLoan(LoanModel loan) {
 
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
