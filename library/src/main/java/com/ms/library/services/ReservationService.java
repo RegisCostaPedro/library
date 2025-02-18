@@ -33,15 +33,12 @@ public class ReservationService {
 
     public ReservationModel saveReservation(ReservationModel reservationModel) {
 
-
         BookModel bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
-
 
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
-
 
         reservationModel.setBookModel(bookModel);
         reservationModel.setUserModel(userModel);

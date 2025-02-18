@@ -9,7 +9,8 @@ import java.util.Date;
 
 public record LoanRecordDto(UserModel userModel,
                             BookModel bookModel,
-                            LocalDateTime returnDate
+                            LocalDateTime returnDate,
+                            StatusLoan status
                            )
 {
 }

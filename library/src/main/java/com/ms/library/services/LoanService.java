@@ -39,26 +39,15 @@ public class LoanService {
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found."));
 
-
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
+
         if (loan.getReturnDate() == null) {
-            loan.setReturnDate(LocalDateTime.now().plusDays(16));
-        }
-        long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(),loan.getReturnDate());
-        System.out.println("daysBetween " + daysBetween);
-        System.out.println("daysBetween " + daysBetween);
-        System.out.println("daysBetween " + daysBetween);
-        System.out.println("daysBetween " + daysBetween);
-        if (daysBetween > 15) {
-            throw new LoanReturnDateOutOfLimitException();
+            loan.setReturnDate(LocalDateTime.now().plusDays(15));
         }
 
-        if (loan.getReturnDate().isBefore(LocalDateTime.now())) {
-            throw new InvalidReturnDateException();
-        }
-
+        LocalDateTime returnDateValid = validReturnDate(loan, loan.getReturnDate());
         List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
 
         if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
@@ -90,12 +79,13 @@ public class LoanService {
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
-        if (loan.getReturnDate().isBefore(LocalDateTime.now())) {
-            throw new InvalidReturnDateException();
+
+        if (loan.getReturnDate() != null){
+            validReturnDate(loan, loan.getReturnDate());
+            loanFind.setReturnDate(loan.getReturnDate());
         }
 
         loanFind.setLoanDate(LocalDateTime.now());
-        loanFind.setReturnDate(loan.getReturnDate());
         loanFind.setBookModel(bookModel);
         loanFind.setUserModel(userModel);
         loanFind.setStatus(loan.getStatus());
@@ -106,4 +96,30 @@ public class LoanService {
     public void deleteLoan(UUID id) {
         loanRepository.deleteById(id);
     }
+
+    public LocalDateTime validReturnDate(LoanModel loan, LocalDateTime returnDate) {
+        BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
+        long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), returnDate);
+
+        if (daysBetween > 15) {
+            throw new LoanReturnDateOutOfLimitException();
+        }
+        if (loan.getReturnDate().isBefore(LocalDateTime.now())) {
+            throw new InvalidReturnDateException();
+        }
+        if (returnDate.isBefore(LocalDateTime.now())) {
+            throw new InvalidReturnDateException();
+        }
+
+        List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
+
+        if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
+            throw new NoBooksAvailableException("This book is in use.");
+        }
+        return returnDate;
+    }
+
+
+
+
 }

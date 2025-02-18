@@ -4,7 +4,7 @@ public enum StatusLoan {
 
     IN_USE,
     RETURNED,
-    RESERVED,
-    AVAILABLE,
-    UNAVAILABLE
+    RESERVED
+
+
 }
