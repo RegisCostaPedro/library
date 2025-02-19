@@ -34,6 +34,9 @@ public class LoanService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BookService bookService;
+
     @Transactional
     public LoanModel saveLoan(LoanModel loan) {
 
@@ -61,6 +64,9 @@ public class LoanService {
         loan.setBookModel(bookModel);
         loan.setUserModel(userModel);
 
+        bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loan.getBookQuantity());
+
+
         return loanRepository.save(loan);
     }
 
@@ -82,11 +88,11 @@ public class LoanService {
             throw new NoBooksAvailableException();
         }
 
-        if (loan.getReturnDate() != null){
+        if (loan.getReturnDate() != null) {
             validReturnDate(loan, loan.getReturnDate());
             loanFind.setReturnDate(loan.getReturnDate());
         }
-
+        bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loan.getBookQuantity());
         loanFind.setLoanDate(LocalDateTime.now());
         loanFind.setBookModel(bookModel);
         loanFind.setUserModel(userModel);
@@ -115,13 +121,9 @@ public class LoanService {
 
         List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
 
-        if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
-            throw new NoBooksAvailableException("This book is in use.");
-        }
+
         return returnDate;
     }
-
-
 
 
 }

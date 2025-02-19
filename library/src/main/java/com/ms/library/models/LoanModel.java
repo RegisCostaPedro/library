@@ -22,6 +22,8 @@ public class LoanModel implements Serializable {
     @JoinColumn(name = "user_id")
     private UserModel userModel;
 
+   private Integer bookQuantity;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_book")
     private BookModel bookModel;
@@ -37,9 +39,10 @@ public class LoanModel implements Serializable {
     public LoanModel() {
     }
 
-    public LoanModel(UUID loanId, UserModel userModel, BookModel bookModel, LocalDateTime loanDate, LocalDateTime returnDate, StatusLoan status) {
+    public LoanModel(UUID loanId, UserModel userModel, Integer bookQuantity, BookModel bookModel, LocalDateTime loanDate, LocalDateTime returnDate, StatusLoan status) {
         this.loanId = loanId;
         this.userModel = userModel;
+        this.bookQuantity = bookQuantity;
         this.bookModel = bookModel;
         this.loanDate = loanDate;
         this.returnDate = returnDate;
@@ -60,6 +63,14 @@ public class LoanModel implements Serializable {
 
     public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
+    }
+
+    public Integer getBookQuantity() {
+        return bookQuantity;
+    }
+
+    public void setBookQuantity(Integer bookQuantity) {
+        this.bookQuantity = bookQuantity;
     }
 
     public BookModel getBookModel() {
@@ -98,11 +109,12 @@ public class LoanModel implements Serializable {
     public String toString() {
         return "LoanModel{" +
                 "loanId=" + loanId +
-                "\n, userModel=" + userModel +
-                "\n, bookModel=" + bookModel +
-                "\n, loanDate=" + loanDate +
-                "\n, returnDate=" + returnDate +
-                "\n, status=" + status +
-                '}'+"\n";
+                ", userModel=" + userModel +
+                ", bookQuantity=" + bookQuantity +
+                ", bookModel=" + bookModel +
+                ", loanDate=" + loanDate +
+                ", returnDate=" + returnDate +
+                ", status=" + status +
+                '}';
     }
 }

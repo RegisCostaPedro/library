@@ -21,6 +21,7 @@ public class LoanController {
 
     @PostMapping
     public ResponseEntity<LoanModel> createLoan(@RequestBody LoanRecordDto loanRecordDto) {
+
         LoanModel loanModel = new LoanModel();
 
         BeanUtils.copyProperties(loanRecordDto, loanModel);
