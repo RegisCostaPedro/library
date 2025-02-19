@@ -40,11 +40,13 @@ public class ReservationController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ReservationModel> updateReservation(@RequestBody ReservationRecordDto reservationRecordDto, @PathVariable UUID id) {
+    public ResponseEntity<ReservationModel> updateReservation(@RequestBody ReservationRecordDto reservationRecordDto,
+                                                              @RequestParam UUID loanId,
+                                                              @PathVariable UUID id) {
         ReservationModel reservationModel = new ReservationModel();
         BeanUtils.copyProperties(reservationRecordDto, reservationModel);
 
-        return new ResponseEntity<>(reservationService.updateReservation(reservationModel, id), HttpStatus.CREATED);
+        return new ResponseEntity<>(reservationService.updateReservation(reservationModel, id,loanId), HttpStatus.OK);
 
     }
 

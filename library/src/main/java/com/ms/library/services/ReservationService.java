@@ -69,20 +69,28 @@ public class ReservationService {
         return reservationRepository.findById(id).get();
     }
 
-    public ReservationModel updateReservation(ReservationModel reservationModel, UUID id) {
+    public ReservationModel updateReservation(ReservationModel reservationModel, UUID id, UUID loanId) {
+        // Procurando as devidas entidades no banco de dados
         var reservationFind = reservationRepository.findById(id).get();
-        BookModel bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
-        UserModel userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
+        var bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
+        var userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
+        var loan = loanService.findLoanById(loanId);
 
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
-        var loan = new LoanModel();
+        // Alterando os dados do empréstimo de acordo com a os dados da reserva
+        loan.setLoanDate(reservationModel.getReservationDate());
+        loan.setReturnDate(reservationModel.getReturnDate());
+        loan.setUserModel(userModel);
+        loan.setBookModel(bookModel);
 
+        switch (reservationModel.getStatus()) {
+            case CANCELLED -> loan.setStatus(StatusLoan.RETURNED);
+            case ACTIVE -> loan.setStatus(StatusLoan.RESERVED);
+        }
 
-        reservationFind.setStatus(reservationModel.getStatus());
-        reservationFind.setUserModel(userModel);
-        reservationFind.setBookModel(bookModel);
+        loanService.updateLoan(loan, loanId);
 
         if (reservationModel.getReservationDate() == null) {
             var previousReservationDate = reservationRepository.findById(id).get();
