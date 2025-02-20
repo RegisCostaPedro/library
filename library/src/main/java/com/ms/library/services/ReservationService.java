@@ -70,6 +70,7 @@ public class ReservationService {
     }
 
     public ReservationModel updateReservation(ReservationModel reservationModel, UUID id, UUID loanId) {
+
         // Procurando as devidas entidades no banco de dados
         var reservationFind = reservationRepository.findById(id).get();
         var bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();

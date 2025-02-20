@@ -49,10 +49,11 @@ public class LoanService {
         }
 
         if (loan.getReturnDate() == null) {
-            loan.setReturnDate(LocalDateTime.now().plusDays(15));
+            validReturnDate(loan, LocalDateTime.now().plusDays(15));
+
         }
 
-        LocalDateTime returnDateValid = validReturnDate(loan, loan.getReturnDate());
+        validReturnDate(loan, loan.getReturnDate());
         List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
 
         if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
@@ -64,9 +65,12 @@ public class LoanService {
         loan.setBookModel(bookModel);
         loan.setUserModel(userModel);
 
-        bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loan.getBookQuantity());
+        Integer bookQuantity =  (loan.getBookQuantity() == null) ? 1 : loan.getBookQuantity();
+        bookService.updateBookQuantityByRole(bookModel.getBookId(),
+                userModel.getRoleUser(),bookQuantity
+               );
 
-
+        loan.setBookQuantity(bookQuantity);
         return loanRepository.save(loan);
     }
 
@@ -92,6 +96,7 @@ public class LoanService {
             validReturnDate(loan, loan.getReturnDate());
             loanFind.setReturnDate(loan.getReturnDate());
         }
+
         bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loan.getBookQuantity());
         loanFind.setLoanDate(LocalDateTime.now());
         loanFind.setBookModel(bookModel);
@@ -107,15 +112,14 @@ public class LoanService {
 
     public LocalDateTime validReturnDate(LoanModel loan, LocalDateTime returnDate) {
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
-        long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), returnDate);
+        long daysBetween = ChronoUnit.DAYS.between(loan.getReturnDate(), returnDate);
 
         if (daysBetween > 15) {
+            System.out.println(daysBetween);
+            System.out.println("returnDate " + returnDate.getDayOfMonth());
             throw new LoanReturnDateOutOfLimitException();
         }
-        if (loan.getReturnDate().isBefore(LocalDateTime.now())) {
-            throw new InvalidReturnDateException();
-        }
-        if (returnDate.isBefore(LocalDateTime.now())) {
+        if (returnDate != null && returnDate.isBefore(LocalDateTime.now())) {
             throw new InvalidReturnDateException();
         }
 

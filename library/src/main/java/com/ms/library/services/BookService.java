@@ -5,6 +5,7 @@ import com.ms.library.enums.StatusLoan;
 import com.ms.library.exceptions.NoBooksAvailableException;
 import com.ms.library.models.BookModel;
 import com.ms.library.repositories.BookRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,7 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional
     public void updateBookQuantityByRole(UUID id, RoleUser roleUser, Integer quantity) {
 
         var bookFind = bookRepository.findById(id).get();

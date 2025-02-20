@@ -15,6 +15,7 @@ public class ClassModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID classId;
+    @Column(unique = true)
     private Integer numClass;
     private String courseName;
 

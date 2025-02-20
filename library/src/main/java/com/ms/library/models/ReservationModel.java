@@ -93,4 +93,16 @@ public class ReservationModel implements Serializable {
     public void setBookModel(BookModel bookModel) {
         this.bookModel = bookModel;
     }
+
+    @Override
+    public String toString() {
+        return "ReservationModel{" +
+                "reservationId=" + reservationId +
+                ", reservationDate=" + reservationDate +
+                ", returnDate=" + returnDate +
+                ", status=" + status +
+                ", userModel=" + userModel +
+                ", bookModel=" + bookModel +
+                '}';
+    }
 }

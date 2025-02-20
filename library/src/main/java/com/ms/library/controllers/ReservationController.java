@@ -3,6 +3,7 @@ package com.ms.library.controllers;
 import com.ms.library.dtos.ReservationRecordDto;
 import com.ms.library.models.ReservationModel;
 import com.ms.library.services.ReservationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<ReservationModel> createReservation(@RequestBody ReservationRecordDto reservationRecordDto) {
+    public ResponseEntity<ReservationModel> createReservation(@RequestBody @Valid ReservationRecordDto reservationRecordDto) {
 
         ReservationModel reservationModel = new ReservationModel();
         BeanUtils.copyProperties(reservationRecordDto, reservationModel);
@@ -43,6 +44,7 @@ public class ReservationController {
     public ResponseEntity<ReservationModel> updateReservation(@RequestBody ReservationRecordDto reservationRecordDto,
                                                               @RequestParam UUID loanId,
                                                               @PathVariable UUID id) {
+
         ReservationModel reservationModel = new ReservationModel();
         BeanUtils.copyProperties(reservationRecordDto, reservationModel);
 
