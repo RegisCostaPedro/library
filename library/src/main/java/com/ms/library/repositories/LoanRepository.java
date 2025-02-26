@@ -18,5 +18,7 @@ public interface LoanRepository extends JpaRepository<LoanModel, UUID> {
     List<LoanModel> checkBookStatus(@Param("bookId") UUID bookId);
 
 
+    @NativeQuery("SELECT COUNT(*) FROM public.tb_loan join tb_book on tb_book.book_id = tb_loan.id_book join tb_user on tb_user.user_id = tb_loan.user_id where tb_user.user_id = :userId ")
+    Long countLoans(UUID userId);
 
 }

@@ -1,9 +1,6 @@
 package com.ms.library.infra;
 
-import com.ms.library.exceptions.BookInUseException;
-import com.ms.library.exceptions.InvalidReturnDateException;
-import com.ms.library.exceptions.LoanReturnDateOutOfLimitException;
-import com.ms.library.exceptions.NoBooksAvailableException;
+import com.ms.library.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,6 +33,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<RestErrorMessage> LoanReturnDateOutOfLimitException(LoanReturnDateOutOfLimitException exception) {
         RestErrorMessage threatErrorResponse = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatErrorResponse);
+    }
+
+    @ExceptionHandler(LoanQuantityByStudentException.class)
+    private ResponseEntity<RestErrorMessage> LoanQuantityByStudentException(LoanQuantityByStudentException exception) {
+        RestErrorMessage threatErrorResponse = new RestErrorMessage(HttpStatus.CONFLICT, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(threatErrorResponse);
     }
 
 }

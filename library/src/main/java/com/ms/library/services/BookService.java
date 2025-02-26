@@ -53,20 +53,23 @@ public class BookService {
     }
 
     @Transactional
-    public void updateBookQuantityByRole(UUID id, RoleUser roleUser, Integer quantity) {
+    public void updateBookQuantityByRole(UUID id, RoleUser roleUser, Integer quantity, StatusLoan loanStatus) {
 
         var bookFind = bookRepository.findById(id).get();
 
-        if (bookFind.getQuantity_available() <= 0 || quantity > bookFind.getQuantity_available()) {
+        if (bookFind.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException("Insufficient quantity of books, only " + bookFind.getQuantity_available() + " books left in stock");
         }
 
-        switch (roleUser) {
-            case LIBRARIAN, ADMIN, TEACHER ->
-                    bookFind.setQuantity_available(bookFind.getQuantity_available() - quantity);
-            case STUDENT -> bookFind.setQuantity_available(bookFind.getQuantity_available() - 1);
+        if (loanStatus.equals(StatusLoan.RETURNED)) {
+            bookFind.setQuantity_available(bookFind.getQuantity_available() + quantity);
+        } else {
+            switch (roleUser) {
+                case LIBRARIAN, ADMIN, TEACHER ->
+                        bookFind.setQuantity_available(bookFind.getQuantity_available() - quantity);
+                case STUDENT -> bookFind.setQuantity_available(bookFind.getQuantity_available() - 1);
+            }
         }
-
 
         bookRepository.save(bookFind);
     }

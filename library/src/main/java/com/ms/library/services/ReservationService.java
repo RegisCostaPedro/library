@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -35,6 +36,8 @@ public class ReservationService {
 
     @Autowired
     private LoanService loanService;
+    @Autowired
+    private BookService bookService;
 
     public ReservationModel saveReservation(ReservationModel reservationModel) {
 
@@ -69,13 +72,15 @@ public class ReservationService {
         return reservationRepository.findById(id).get();
     }
 
-    public ReservationModel updateReservation(ReservationModel reservationModel, UUID id, UUID loanId) {
+    public ReservationModel updateReservation(ReservationModel reservationModel, UUID reservationId, UUID loanId) {
 
         // Procurando as devidas entidades no banco de dados
-        var reservationFind = reservationRepository.findById(id).get();
+        var reservationFind = reservationRepository.findById(reservationId).get();
         var bookModel = bookRepository.findById(reservationModel.getBookModel().getBookId()).get();
         var userModel = userRepository.findById(reservationModel.getUserModel().getUserId()).get();
         var loan = loanService.findLoanById(loanId);
+
+
 
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
@@ -87,14 +92,21 @@ public class ReservationService {
         loan.setBookModel(bookModel);
 
         switch (reservationModel.getStatus()) {
-            case CANCELLED -> loan.setStatus(StatusLoan.RETURNED);
-            case ACTIVE -> loan.setStatus(StatusLoan.RESERVED);
+            case CANCELLED:
+                loan.setStatus(StatusLoan.RETURNED);
+                bookService.updateBookQuantityByRole(bookModel.getBookId(),userModel.getRoleUser(),reservationModel.getBookModel().getQuantity_available(),loan.getStatus());
+                loanService.deleteLoan(loanId);
+                return reservationFind;
+
+            case ACTIVE:
+                loan.setStatus(StatusLoan.RESERVED);
+                break;
         }
 
         loanService.updateLoan(loan, loanId);
 
         if (reservationModel.getReservationDate() == null) {
-            var previousReservationDate = reservationRepository.findById(id).get();
+            var previousReservationDate = reservationRepository.findById(reservationId).get();
             reservationFind.setReservationDate(previousReservationDate.getReservationDate());
         } else {
             reservationFind.setReservationDate(reservationModel.getReservationDate());

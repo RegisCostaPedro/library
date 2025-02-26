@@ -1,7 +1,9 @@
 package com.ms.library.services;
 
+import com.ms.library.enums.RoleUser;
 import com.ms.library.enums.StatusLoan;
 import com.ms.library.exceptions.InvalidReturnDateException;
+import com.ms.library.exceptions.LoanQuantityByStudentException;
 import com.ms.library.exceptions.LoanReturnDateOutOfLimitException;
 import com.ms.library.exceptions.NoBooksAvailableException;
 import com.ms.library.models.BookModel;
@@ -12,6 +14,7 @@ import com.ms.library.repositories.LoanRepository;
 import com.ms.library.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -49,26 +52,34 @@ public class LoanService {
         }
 
         if (loan.getReturnDate() == null) {
-            validReturnDate(loan, LocalDateTime.now().plusDays(15));
-
+            LocalDateTime returnDateIfNull = LocalDateTime.now().plusDays(15);
+            loan.setReturnDate(returnDateIfNull);
         }
 
-        validReturnDate(loan, loan.getReturnDate());
+
         List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
-
-        if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE)) {
-            throw new NoBooksAvailableException("This book is in use.");
+        if (loansWithStatusInUse.stream().anyMatch(loanModel -> loanModel.getStatus() == StatusLoan.IN_USE) && bookModel.getQuantity_available() <= 0) {
+            throw new NoBooksAvailableException();
         }
+        Long loanQuantity = loanRepository.countLoans(userModel.getUserId());
 
-        loan.setStatus(StatusLoan.IN_USE);
+        if (userModel.getRoleUser().equals(RoleUser.STUDENT) && loanQuantity == 1) {
+            throw new LoanQuantityByStudentException();
+        }
+        validReturnDate(loan, loan.getReturnDate());
+        if (loan.getStatus() == null) {
+            loan.setStatus(StatusLoan.IN_USE);
+        }
+        loan.setStatus(StatusLoan.RESERVED);
+
         loan.setLoanDate(LocalDateTime.now());
         loan.setBookModel(bookModel);
         loan.setUserModel(userModel);
 
-        Integer bookQuantity =  (loan.getBookQuantity() == null) ? 1 : loan.getBookQuantity();
+        Integer bookQuantity = (loan.getBookQuantity() == null) ? 1 : loan.getBookQuantity();
+
         bookService.updateBookQuantityByRole(bookModel.getBookId(),
-                userModel.getRoleUser(),bookQuantity
-               );
+                userModel.getRoleUser(), bookQuantity, loan.getStatus());
 
         loan.setBookQuantity(bookQuantity);
         return loanRepository.save(loan);
@@ -88,6 +99,10 @@ public class LoanService {
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId()).get();
 
+        if (loanFind.getStatus().equals(StatusLoan.RETURNED)){
+            throw new RuntimeException("LIVRO JÁ DEVOLVIDO");
+        }
+
         if (bookModel.getQuantity_available() <= 0) {
             throw new NoBooksAvailableException();
         }
@@ -97,36 +112,41 @@ public class LoanService {
             loanFind.setReturnDate(loan.getReturnDate());
         }
 
-        bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loan.getBookQuantity());
+        bookService.updateBookQuantityByRole(bookModel.getBookId(), userModel.getRoleUser(), loanFind.getBookQuantity(), loan.getStatus());
         loanFind.setLoanDate(LocalDateTime.now());
         loanFind.setBookModel(bookModel);
         loanFind.setUserModel(userModel);
         loanFind.setStatus(loan.getStatus());
 
         return loanRepository.save(loanFind);
+
+
     }
 
     public void deleteLoan(UUID id) {
         loanRepository.deleteById(id);
     }
 
-    public LocalDateTime validReturnDate(LoanModel loan, LocalDateTime returnDate) {
+    public void validReturnDate(LoanModel loan, LocalDateTime returnDate) {
         BookModel bookModel = bookRepository.findById(loan.getBookModel().getBookId()).get();
-        long daysBetween = ChronoUnit.DAYS.between(loan.getReturnDate(), returnDate);
+
+        LocalDateTime loanDate = (loan.getLoanDate() != null) ? loan.getLoanDate() : LocalDateTime.now();
+
+        long daysBetween = switch (loan.getStatus()) {
+            case RESERVED -> ChronoUnit.DAYS.between(loanDate, returnDate);
+            default -> ChronoUnit.DAYS.between(LocalDateTime.now(), returnDate);
+
+        };
 
         if (daysBetween > 15) {
-            System.out.println(daysBetween);
-            System.out.println("returnDate " + returnDate.getDayOfMonth());
             throw new LoanReturnDateOutOfLimitException();
         }
-        if (returnDate != null && returnDate.isBefore(LocalDateTime.now())) {
+
+        if (returnDate.isBefore(LocalDateTime.now())) {
             throw new InvalidReturnDateException();
         }
+        loanRepository.checkBookStatus(bookModel.getBookId());
 
-        List<LoanModel> loansWithStatusInUse = loanRepository.checkBookStatus(bookModel.getBookId());
-
-
-        return returnDate;
     }
 
 
