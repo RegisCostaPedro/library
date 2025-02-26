@@ -2,10 +2,7 @@ package com.ms.library.services;
 
 import com.ms.library.enums.RoleUser;
 import com.ms.library.enums.StatusLoan;
-import com.ms.library.exceptions.InvalidReturnDateException;
-import com.ms.library.exceptions.LoanQuantityByStudentException;
-import com.ms.library.exceptions.LoanReturnDateOutOfLimitException;
-import com.ms.library.exceptions.NoBooksAvailableException;
+import com.ms.library.exceptions.*;
 import com.ms.library.models.BookModel;
 import com.ms.library.models.LoanModel;
 import com.ms.library.models.UserModel;
@@ -100,7 +97,7 @@ public class LoanService {
         UserModel userModel = userRepository.findById(loan.getUserModel().getUserId()).get();
 
         if (loanFind.getStatus().equals(StatusLoan.RETURNED)){
-            throw new RuntimeException("LIVRO JÁ DEVOLVIDO");
+            throw new LoanDevolutionStatusException();
         }
 
         if (bookModel.getQuantity_available() <= 0) {
