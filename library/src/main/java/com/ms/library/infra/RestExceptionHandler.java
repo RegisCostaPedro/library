@@ -47,5 +47,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(threatErrorResponse);
     }
 
+    @ExceptionHandler(EmailExistsException.class)
+    private ResponseEntity<RestErrorMessage> emailExistsException(EmailExistsException exception) {
+        RestErrorMessage threatErrorResponse = new RestErrorMessage(HttpStatus.CONFLICT, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(threatErrorResponse);
+    }
+
 
 }

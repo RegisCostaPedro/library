@@ -4,16 +4,16 @@ package com.ms.library.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ms.library.enums.RoleUser;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "TB_USER")
-public class UserModel implements Serializable {
+public class UserModel implements Serializable, UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -79,8 +79,40 @@ public class UserModel implements Serializable {
         this.birthDate = birthDate;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.roleUser == RoleUser.ADMIN)return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+        // se começar a dar pau na verificação coloca pra retornar FALSE
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
     public void setPassword(String password) {
@@ -126,4 +158,7 @@ public class UserModel implements Serializable {
     public void setUserId(UUID userId) {
         this.userId = userId;
     }
+
+
+
 }

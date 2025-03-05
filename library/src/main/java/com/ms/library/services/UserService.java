@@ -1,11 +1,16 @@
 package com.ms.library.services;
 
+import com.ms.library.exceptions.EmailExistsException;
 import com.ms.library.models.ClassModel;
 import com.ms.library.models.UserModel;
 import com.ms.library.repositories.ClassRepository;
 import com.ms.library.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +25,26 @@ public class UserService {
     @Autowired
     private ClassRepository classRepository;
 
-    public UserModel saveUser(UserModel model) {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
+    public UserModel saveUser(UserModel model) {
+        UserModel userModel = new UserModel();
+        var findEmailExisting = userRepository.findBUserByEmail(model.getEmail());
         ClassModel classModel = classRepository.findById(model.getClassModel().getClassId()).get();
-        model.setClassModel(classModel);
-        return userRepository.save(model);
+
+        if (findEmailExisting.getUsername() == userModel.getEmail()) {
+            throw new EmailExistsException();
+        }
+
+        userModel.setName(model.getName());
+        userModel.setRoleUser(model.getRoleUser());
+        userModel.setEmail(model.getEmail());
+        userModel.setBirthDate(model.getBirthDate());
+        userModel.setRegistration(model.getRegistration());
+        userModel.setPassword(passwordEncoder.encode(model.getPassword()));
+        userModel.setClassModel(classModel);
+        return userRepository.save(userModel);
     }
 
     public List<UserModel> findAllUsers() {
