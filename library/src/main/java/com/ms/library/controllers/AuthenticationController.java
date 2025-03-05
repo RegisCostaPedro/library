@@ -1,6 +1,8 @@
 package com.ms.library.controllers;
 
+import com.ms.library.config.security.TokenService;
 import com.ms.library.dtos.AuthenticationRecordDto;
+import com.ms.library.dtos.LoginResponseDto;
 import com.ms.library.dtos.UserRecordDto;
 import com.ms.library.exceptions.EmailExistsException;
 import com.ms.library.models.UserModel;
@@ -28,19 +30,20 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationRecordDto dto){
     var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
     var auth = this.authenticationManager.authenticate(usernamePassword);
 
-    return ResponseEntity.ok().build();
+    var token = tokenService.generateToken((UserModel) auth.getPrincipal());
+    return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserModel> register(@RequestBody @Valid UserRecordDto userRecordDto) {
-
 
         var userModel = new UserModel();
         BeanUtils.copyProperties(userRecordDto, userModel);

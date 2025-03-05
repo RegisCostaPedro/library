@@ -1,5 +1,6 @@
 package com.ms.library.services;
 
+import com.ms.library.config.security.TokenService;
 import com.ms.library.exceptions.EmailExistsException;
 import com.ms.library.models.ClassModel;
 import com.ms.library.models.UserModel;
@@ -27,6 +28,8 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+
     public UserModel saveUser(UserModel model) {
         UserModel userModel = new UserModel();
         ClassModel classModel = classRepository.findById(model.getClassModel().getClassId()).get();
@@ -39,6 +42,8 @@ public class UserService {
         userModel.setRegistration(model.getRegistration());
         userModel.setPassword(passwordEncoder.encode(model.getPassword()));
         userModel.setClassModel(classModel);
+
+
         return userRepository.save(userModel);
     }
 
