@@ -7,7 +7,6 @@ import com.ms.library.repositories.ClassRepository;
 import com.ms.library.repositories.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,12 +29,8 @@ public class UserService {
 
     public UserModel saveUser(UserModel model) {
         UserModel userModel = new UserModel();
-        var findEmailExisting = userRepository.findBUserByEmail(model.getEmail());
         ClassModel classModel = classRepository.findById(model.getClassModel().getClassId()).get();
-
-        if (findEmailExisting.getUsername() == userModel.getEmail()) {
-            throw new EmailExistsException();
-        }
+        if(userRepository.findUserByEmail(model.getEmail()) != null) throw new EmailExistsException();
 
         userModel.setName(model.getName());
         userModel.setRoleUser(model.getRoleUser());

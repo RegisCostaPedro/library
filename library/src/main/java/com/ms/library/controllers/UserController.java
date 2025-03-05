@@ -21,13 +21,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<UserModel> createUser(@RequestBody @Valid UserRecordDto userRecordDto) {
-        var userModel = new UserModel();
-        BeanUtils.copyProperties(userRecordDto, userModel);
 
-        return new ResponseEntity<>(userService.saveUser(userModel), HttpStatus.CREATED);
-    }
 
     @GetMapping
     public ResponseEntity<List<UserModel>> findAllClasses() {
